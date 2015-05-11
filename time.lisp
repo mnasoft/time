@@ -51,6 +51,17 @@
 	  60.0d0
 	  60.0d0) 1))
 
+(defun encode-utime-to-double (&optional (x (get-universal-time )))
+    (+ 2.d0 (/ x (* 24 60 60)))
+)
+
+(encode-utime-to-double)
+(|YYYY-MM-dd_hh:mm:ss|
+ (encode-double-to-utime
+  (encode-utime-to-double)))
+
+
+
 (|YYYY-MM-dd_hh:mm:ss|
  (decode-double-to-utime 3.0d0))
 ;;;; (decode-double-to-utime 42117.804465d0))
