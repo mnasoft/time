@@ -4,19 +4,6 @@
 
 ;;; "time" goes here. Hacks and glory await!
 
-
-(defun culc-time()
-  (let (
-	(start (multiple-value-list (get-time-of-day)))
-	(end   (multiple-value-list (get-time-of-day)))
-	)
-    (setf
-     start (multiple-value-list (get-time-of-day)))
-    (dotimes (i 30000000 ) (multiple-value-list (get-time-of-day)))
-    (setf
-     end   (multiple-value-list (get-time-of-day)))
-    (mapcar #'- end start)))
-
 (defun |YYYY-MM-dd_hh:mm:ss| (&optional (utime (get-universal-time)))
   "Функция печатает текущую дату и время операционной системы"
   (multiple-value-bind
@@ -41,42 +28,28 @@
        (get-universal-time))
     (format nil "~4,'0d-~2,'0d-~2,'0d" year month day )))
 
-(defun encode-double-to-utime (x)
-  (round (*
-	  (-
-	   (*	   
-	    (- x 2.0d0)
-	    24.0d0)
-	   3.0d0)
-	  60.0d0
-	  60.0d0) 1))
+(defun double-local-time-to-utime (x)
+    "Преобразует число типа double по местному времени 
+в формат универсального времени (по Гринвичу)"
+  (let* (
+	 (lst (multiple-value-list
+	       (decode-universal-time
+		(* 24 60 60 (truncate (- x 2))) 0)))
+	 (date    (fourth lst))
+	 (month   (fifth lst))
+	 (year    (sixth lst))
+	 (hours   (second (multiple-value-list (truncate x))))
+	 (hour    (truncate (* hours 24)))
+	 (minutes (truncate (* 60 (- (* hours 24) hour))))
+	 (second  (round (* 60 (- (* 60 (- (* hours 24) hour)) minutes)))))
+    (encode-universal-time second minutes hour date month year)))
 
-(defun encode-utime-to-double (&optional (x (get-universal-time )))
-    (+ 2.d0 (/ x (* 24 60 60)))
-)
-
-(encode-utime-to-double)
-(|YYYY-MM-dd_hh:mm:ss|
- (encode-double-to-utime
-  (encode-utime-to-double)))
-
-
-
-(|YYYY-MM-dd_hh:mm:ss|
- (decode-double-to-utime 3.0d0))
-;;;; (decode-double-to-utime 42117.804465d0))
-
-(|YYYY-MM-dd_hh:mm:ss|)
-(|hh:mm:ss|)
-(|YYYY-MM-dd|)
-
-(decode-universal-time 3638978306)
-
-
-;;;;(culc-time)				
-
-;;;;(- (encode-universal-time 0 0 0 1 1 1970 3) (encode-universal-time 0 0 0 1 1 1970 0))
-
-;;;;(- (get-universal-time) (get-time-of-day) (encode-universal-time 0 0 0 1 1 1970 0))
-
-;;;;(decode-universal-time (get-universal-time) )
+(defun utime-to-double-local-time (&optional (x (get-universal-time)))
+  "Преобразует универсальное временя (по Гринвичу) 
+в число типа double по местному времени"
+  (multiple-value-bind (s m h dd mm yy) (decode-universal-time x)
+    (+ 2d0
+       (/ (encode-universal-time 0 0 0 dd mm yy 0) 24 60 60)
+       (/ s 24 60 60)
+       (/ m 24 60)
+       (/ h 24))))
