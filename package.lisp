@@ -9,9 +9,4 @@
   (:export utime-to-double-local-time)   ; Преобразует универсальное временя (по Гринвичу) в число типа double по местному времени
   )
 
-
-
-
-
-
-
+;;;;(declaim (optimize (space 0) (compilation-speed 0)  (speed 0) (safety 3) (debug 3)))
