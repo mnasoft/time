@@ -1,6 +1,6 @@
 ;;;; time.lisp
 
-(in-package #:time)
+(in-package :time)
 
 ;;; "time" goes here. Hacks and glory await!
 

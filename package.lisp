@@ -1,6 +1,6 @@
 ;;;; package.lisp
 
-(defpackage #:time
+(defpackage :time
   (:use #:cl)
   (:export |YYYY-MM-dd_hh:mm:ss|)        ; Функция печатает текущую дату и время операционной системы
   (:export |hh:mm:ss|)                   ; Функция печатает текущуее время операционной системы
